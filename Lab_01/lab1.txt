@@ -1,0 +1,30 @@
+TPS #1
+1. Cesar Garcia, Alexandro Hernandez
+2.
+* https://www.howtogeek.com/140679/beginner-geek-how-to-start-using-the-linux-terminal/#:~:text=Launch%20a%20terminal%20from%20your,distributions%20use%20bash%20by%20default.&text=Press%20Enter%20after%20typing%20a,have%20file%20extensions%20on%20Linux.
+* https://www.digitalocean.com/community/tutorials/an-introduction-to-the-linux-terminal
+* http://linuxcommand.org/
+
+
+
+TPS #2
+1. All I need to do is click on the terminal icon to open up one terminal
+1a. Yes, I could create multiple instances of a terminal
+1b. You would want to have more than 1 terminal if you are trying to run multiple programs at the same time for example
+2. You can use the ls command to see the content in a directory
+3. All I would need to do is use the "cd" command to cd into my Desktop like this: cd Desktop
+4. You need to use the mkdir command (make directory) like this: mkdir CSE31
+
+TPS #3
+1. 
+* http://akira.ruc.dk/~keld/teaching/CAN_e14/Readings/How%20to%20Compile%20and%20Run%20a%20C%20Program%20on%20Ubuntu%20Linux.pdf
+* https://www.geeksforgeeks.org/gcc-command-in-linux-with-examples/
+3. You would use : gcc -o test main.c
+4. If it complies correctly, the user should be able to see the desired output once they do ./test (it creates an executable to see the input)
+5. The c flag would complie the source files without linking, it would create an object file
+6. The g flag tells gcc whether or not to generate information for debugging
+7. You would need to use the mv command like this: mv main.c cselab1.c
+8. It will complie and produce a .out file, in this it create "a.out" in our directory
+9. You would do: ./a.out to run the program and see the output
+
+TPS #4
