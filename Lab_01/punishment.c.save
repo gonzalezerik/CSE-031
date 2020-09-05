@@ -1,0 +1,9 @@
+#include <stdio.h>
+int main()
+{
+p
+
+rintf("Welcome to CSE 31!\n");
+return 0;
+}
+
