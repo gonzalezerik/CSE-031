@@ -1,0 +1,10 @@
+Assignment #1
+1. Line 15 in the read_values, we weren't passing in the address of our input correctly 
+2. You just put an ampersand in front of "input" so it reads it's address 
+3. The bug is that the sum parameter is never getting updated and it remains 0.
+4. I passed the sum as a pointer and updated it, it seemed to work.
+
+Assignment #2
+1. No, the output is not expected. It seems jumbled.
+2. No, the output is not expected. It seems to be overflowing and the str2 is repeated twice. I think the bug was that the char array had to be filled up.
+3. The output is not expected. I think that it is "chopping" every word after 4 characters.

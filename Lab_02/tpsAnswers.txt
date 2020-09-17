@@ -1,0 +1,27 @@
+TPS #1
+1. Anthony Zepeda, Ivon Sedano Vasquez
+2.
+* https://rpg.hamsterrepublic.com/ohrrpgce/GDB_on_Windows#:~:text=MinGW%20distributes%20a%20Windows%20version,gdb%20bin%20package%20is%20installed.
+* https://www.bitdegree.org/learn/gdb-debugger
+* https://www.geeksforgeeks.org/gdb-step-by-step-introduction/
+* https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf
+
+
+TPS #2
+1. You need to include a -g flag while using gcc, like so:  gcc -g -o punish punishment.c
+2. Once complied, you could just do: gdb punish to open up gdb.
+3. I did "run punish" once inside gdb and I was able to run my punishment program
+4. Breakpoints are used to stop a program at a certian point. In this case, we would want to say "break punishment.c:24"
+5. We can just use "s" to go to the next line. s or step goes to the next script, command
+n or next goes to the next line
+6. I used "print variableName" to see the variables
+7. First, you must use continue to continue going through the program.
+8. You can just use "q" and hit enter to exit GDB
+
+TPS #3
+1. There are 4 variables, *px and *py are pointers
+2. The values will be "garbage" from memory,or random,  each time the values are different. This has to do with the program using different parts of our computers memory each time it runs and the variables can't be empty and also the last thing saved in the address.
+3. You could just assign everything to 0 and update the values later on.
+8. It makes sense, from my understanding the arr name will always be pointing to the first thing in itself, in this case arr[0].
+
+

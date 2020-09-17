@@ -1,11 +1,27 @@
 /*
 Pseudocode:
-1. Create two variables to keep track of postive/negative averages, another two to keep count of pos and neg numbers seperately, an array to store all of the user input
-2. Ask user to enter a number 
-3. Keep asking the user to enter a number, store it in the array, increase the index for the array, stop when the number is 0
-4. Once program stops taking in input, iterate through the array, if the number is pos increase the pos count and add the number to the pos average variable, if it is negative, increase the negative count variable and add it to the negative average variable
-5. If there are no negative numbers, divide the postive average value with the total positive numbers and output it. 5. If there are no postive numbers, divide the negative average value with the total negative numbers and output it. If both of the conditions are false, output both the postive and negative averages.
-6. Once the averages are outputted, exit program.
+
+ input integer
+ size = size + 1
+
+ while number != 0:
+     input integer
+     size = size + 1
+
+ for i less than size of array:
+     if arr value > 0:
+     	negative average += arr value
+	
+     if arr value < 0:
+         positive average += arr value
+
+ if positive average = 0:
+     print negative average
+ else if negative average = 0:
+     print positive average
+ else:
+	print positive average
+	print negative average
 */
 
 #include <stdlib.h>
