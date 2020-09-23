@@ -1,0 +1,10 @@
+TPS #1
+1. The 3 pools of memory are static, stack and heap. Static holds global variables, stack holds local variables and the heap is essentially dynamic storage that is not allocated (malloc).
+2a. There are 3 variables declared, num, ptr and handle.
+2b. Two of them are pointers (ptr and handle). ptr points to memory and handle points to the pointer ptr (both are integers) . 
+2c. These variables are stored in the stack, since we called them dynamically.
+2d. It is allocating space off the heap (malloc).
+
+TPS #2
+1. It seems to be a class for a Node, the program itself is trying to assign values to a Node.
+3. The value of head is the address of iValue, head and fValue are 4 bytes apart just like an array.
