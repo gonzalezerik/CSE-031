@@ -7,7 +7,26 @@ typedef struct node {
 
 int has_cycle(node *head) {
 	// Your code goes here:
+  if(head == NULL){ //points to null
+    return head;
+  } //base case
+  else {
+    node* ptr = head; 
+    node* ptr2 = head->next;
+
+    while(ptr != NULL && ptr2 != NULL && ptr2->next != NULL){
+      if(ptr == ptr2){
+        return head;
+      } 
+      else{
+        ptr = ptr->next;
+        ptr2 = ptr2->next->next;
+      }
+    }
+  }
+  return head->value;
 }
+
 
 void test_has_cycle(void) {
   int i;
