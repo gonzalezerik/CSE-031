@@ -1,0 +1,20 @@
+TPS #1
+1. It should print 2.
+2. It should print Hex of 'A'
+4. It should print 2
+5a. We allocate only one array
+5b. Yes, they point to the same location.
+6.
+7.
+8.
+9.
+10.
+
+TPS #2
+1.
+2.
+3.
+4.
+5.
+6.
+7.
