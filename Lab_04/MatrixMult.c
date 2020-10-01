@@ -59,7 +59,7 @@ int main() {
 	matA = (int**)malloc(n * sizeof(int*));
 	allocater(matA, n, 1);
 	matB = (int**)malloc(n * sizeof(int*));
-	allocater(matB, n, 1);
+	allocater(matB, n, 10);
 
 	// (3) Call printArray to print out the 2 arrays here.
 	printArray(matA, n);

@@ -5,15 +5,10 @@ TPS #1
 5a. We allocate only one array
 5b. Yes, they point to the same location.
 6. There is a difference of 4 bytes. The 4 bytes is allocated for each int.
-8.
-9.
-10.
+8. The difference should be 1 byte. It is one byte because chars take up one byte of memory.
+10. Both of them point to the first element, for ints it is 4 bytes apart, for char it is only 1 byte apart
 
 TPS #2
-1.
-2.
-3.
-4.
-5.
-6.
-7.
+1. Line #8 allocates a double pointer.
+2. We would need to increase until we reach i, using our pointer (something like pointer = pointer + i);
+4. We want size to ensure that we don't go out of bounds of the array/
