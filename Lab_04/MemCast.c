@@ -16,6 +16,17 @@ int main(){
         four_c[i] = 'A'; // ASCII value of 'A' is 65 or 0x41 in Hex.
     
     // Add your code for the exercises here:
-		
+	printf("%x\n", four_ints[0]);
+	printf("%x\n", four_ints[0]);
+	printf("%x\n", four_ints[0]);
+	printf("four_ints: %p four_c: %p \n" , four_ints, four_c);
+
+	for(int i = 0; i < 4; i++){
+		printf("element no. %d address: %p value: %d \n", i, four_ints+i, *(four_ints + i));
+	}
+
+	for(int i = 0; i < 4; i++){
+		printf("element no. %d address: %p value: %d \n", i, four_c+i, *(four_c + i));
+	}
 	return 0;
 }

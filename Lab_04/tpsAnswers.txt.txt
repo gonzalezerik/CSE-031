@@ -4,8 +4,7 @@ TPS #1
 4. It should print 2
 5a. We allocate only one array
 5b. Yes, they point to the same location.
-6.
-7.
+6. There is a difference of 4 bytes. The 4 bytes is allocated for each int.
 8.
 9.
 10.
