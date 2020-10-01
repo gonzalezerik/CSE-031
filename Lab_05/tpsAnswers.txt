@@ -1,0 +1,18 @@
+TPS #1
+1. MARS stands for MIPS Assembler and Runtime Simulator
+4a. File -> Open -> Find File
+4b. Run -> Assemble or Screwdriver/Wrench Button
+4c. The play button
+4d. No
+4e. Green Play Button with a 1 in it
+4f. Run -> Rest (two arrows back)
+
+TPS #2
+1. .data means starts a data declariation, .word means the size of the data, .text has all the instructions
+2. Branch to finish (line 17) if lines 10-15 have run n times
+3. Jumps back to fib
+4. Execute -> Text_Segment -> Bkpt -> check the box for the breakpoint
+5. Hit play button again
+6. It is on the right hand side of the MARS GUI
+7. It is stored in Ox10010000, because n is stored in the data segment
+8. Syscall either prints or exits the program. If it is given a 10, it exits. If it is given 1, it prints the content in $v0.
