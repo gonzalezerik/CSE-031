@@ -1,0 +1,26 @@
+TPS #1
+1. Text Segment: 0x00400000, Data Segment: 0x10010000. The panels in execute
+2. One observation is no labels/no comments. Basic has more instructions and lines.True Assembly Language uses the number representation, and MIPS uses the name of the registers are swapped with memory addresses for jump.
+3. 32 bytes, (20 hexadecimals = 32 bytes)
+4. 8 columns
+5. Each column is 4 bytes for each address. Address location is row. 
+6. m:	.word 20
+7. 0x100100004
+8. str1: .asciiz "I love CSE31!"
+9. 0x1001008 -> 0x1001014 (check the ASCII checkbox)
+10. Yes it does
+11. 
+la $a0, str1
+addi $v0, $0, 4
+syscall 
+12. Loads address of n to $t3. lw loads the word from where t3 points to t3.
+
+TPS #2
+1. 
+2.
+3.
+4.
+5.
+6.
+7.
+8.
