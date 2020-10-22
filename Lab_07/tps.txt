@@ -1,0 +1,4 @@
+TPS #1
+1.Functions return values, Procedures are functions that dont return anything,and Methods are functions of an object
+4.
+5.

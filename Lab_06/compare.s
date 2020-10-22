@@ -29,7 +29,7 @@ input: .asciiz "Enter a number: "
 	syscall
 	
         greatert:li $v0, 4
-	la $a0, str3
+	la $a0, str4
 	syscall
 
 	#less than or eqaul to
@@ -42,5 +42,6 @@ input: .asciiz "Enter a number: "
 	syscall
 	 
         lesst:li $v0, 4
- 	la $a0, str2
+ 	la $a0, str1
 	syscall
+	
