@@ -21,12 +21,24 @@ MAIN:	la $t0, x
 		j END
 
 		
-SUM: 	la $t0, m
-		lw $s0, 0($t0)		# s0 = m
-		add $a0, $s0, $a0	# Update a0 as new argument for SUB
+SUM: 	addi $sp, sp, -12
+		sw $ra, 0($sp)
+		sw $s0, 8($sp)
+		sw $a0, 4($sp)
+
+		la $t0, m
+		lw $s0, 0($t0)
+		add $a0, $s0, $a0
 		jal SUB
+
+		lw $a0, 4($sp)
 		add $v0, $a0, $v0
-		jr $ra		
+
+		lw $ra, 0($sp)
+		lw $s0, 8($sp)
+		lw $a0, 4($sp)
+		addi $sp, $sp,12
+		jr $ra
 		
 SUB:	la $t0, b
 		addi $sp, $sp -4
