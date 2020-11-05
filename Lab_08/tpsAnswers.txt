@@ -1,0 +1,12 @@
+TPS #1
+5. We do not need to declare n in the data segment
+
+
+TPS #2
+1. Putting in 5 gives 29
+4. We have to store $a0 so we can pass it to the recursion function
+5. Since our value comes from $v0, we can tell the system to print it while we update the value
+7. We have 3 values to store integers in a stack frame, and the first is for the retuen address
+10. We need $a0 to check if m is 0
+12. Our incoming values will replace the old values
+15. This is the return address of our branch
