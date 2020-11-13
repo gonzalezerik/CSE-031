@@ -102,6 +102,7 @@ char *toUpper(char **list, char *word, int i){
 	return word;
 }
 
+
 void printPuzzle(char** arr, int n) {
 	// This function will print out the complete puzzle grid (arr). It must produce the output in the SAME format as the samples in the instructions.
 	// Your implementation here
@@ -156,7 +157,7 @@ void searchPuzzle(char** arr, int n, char** list, int listSize) {
             } 
 			
 
-            if (r > 0 && r < n)//within rows {
+            if (r > 0 && r < n){//within rows 
 				if (( * word + (j + 1)) == * ( * (arr + r - 1) + c)){ //  if letter is above
                 	*(tempWord + (j + 1)) = * ( * (arr + r + 1) + c); // set temp to below 
                		 count++;
@@ -182,5 +183,6 @@ void searchPuzzle(char** arr, int n, char** list, int listSize) {
 	}
 	}
 
+}
 }
 
