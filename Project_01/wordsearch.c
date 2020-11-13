@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 // Declarations of the two functions you will implement
 // Feel free to declare any helper functions
@@ -75,6 +76,31 @@ int main(int argc, char **argv) {
 	
     return 0;
 }
+char *toLower(char **list, char *word, int i){
+		//Converts a character to uppercase by adding 32 to it's ASCII value
+	for (int j = 0; j < strlen(*(list + i)); j++)
+	{
+		*(word + j) = *(*(list + i) + j);
+		if (*(*(list + i) + j) < 97)
+		{
+			*(word + j) = *(*(list + i) + j) + 32;
+		}
+	}
+	return word;
+}
+
+char *toUpper(char **list, char *word, int i){
+	//Converts a character to uppercase by subtracting 32 to it's ASCII value
+	for (int j = 0; j < strlen(*(list + i)); j++)
+	{
+		*(word + j) = *(*(list + i) + j);
+		if (*(*(list + i) + j) >= 97)
+		{
+			*(word + j) = *(*(list + i) + j) - 32;
+		}
+	}
+	return word;
+}
 
 void printPuzzle(char** arr, int n) {
 	// This function will print out the complete puzzle grid (arr). It must produce the output in the SAME format as the samples in the instructions.
@@ -91,5 +117,70 @@ void printPuzzle(char** arr, int n) {
 void searchPuzzle(char** arr, int n, char** list, int listSize) {
 	// This function checks if arr contains words from list. If a word appears in arr, it will print out that word and then convert that word entry in arr into lower case.
 	// Your implementation here
+	for (int i = 0; i < listSize; i++) {
+ 	char * word = (char * ) malloc((listSize + 1) * sizeof(char * ));
+ 	char * tempWord = (char * ) malloc((listSize + 1) * sizeof(char * ));
+
+    int wordLength = 0;
+	bool isWord = false;
+
+    toUpper(list, word, i);
+
+    int count = 0;
+    wordLength = strlen(word);
+
+    for (int j = 0; j < wordLength; j++) {
+
+    if (isWord == true) {
+      toLower(list, word, i);
+      printf("Word found: %s\n", word);
+	  break; //to avoid duplicates
+    }
+	 else {
+
+      for (int r = 0; r < n-1; r++){//increment through rows 
+        for (int c = 0; c < n-1; c++){///increment through columns 
+		
+          if ( * ( * (arr + r) + c) == * (word + j)) { //check for letter of word
+
+			 if (( * word + (j + 1)) == * ( * (arr + r) + c - 1) && c > 0) // if list prev letter is left
+            {
+              *(tempWord + (j + 1)) = * ( * (arr + r) + c + 1); // set temp string as right value
+              count++;
+            }
+
+        	 else if (( * word + (j + 1)) == * ( * (arr + r) + c + 1) && c < n) // if list prev letter is right
+            {
+              *(tempWord + (j + 1)) = * ( * (arr + r) + c - 1); // set to left value
+              count++;
+            } 
+			
+
+            if (r > 0 && r < n)//within rows {
+				if (( * word + (j + 1)) == * ( * (arr + r - 1) + c)){ //  if letter is above
+                	*(tempWord + (j + 1)) = * ( * (arr + r + 1) + c); // set temp to below 
+               		 count++;
+              }
+			 
+			  else if (( * word + (j + 1)) == * ( * (arr + r - 1) + c + 1)){ // if letter is top right
+                *(tempWord + (j + 1)) = * ( * (arr + r + 1) + c - 1); // set temp to bottom left value
+                count++;
+              } 
+			   else if (( * word + (j + 1)) == * ( * (arr + r - 1) + c - 1)){ // if letter is top left
+                *(tempWord + (j + 1)) = * ( * (arr + r + 1) + c + 1); // set temp to bottom right value
+                count++;
+              }
+            
+          }
+		   if (count == wordLength) { 
+      			isWord = true;
+        }
+      }
+    }
+
+	 }
+	}
+	}
 
 }
+
