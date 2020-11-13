@@ -1,0 +1,31 @@
+• Line #7
+addi $s0, $szero, -15
+I instruction (opcode,rs,rt,immediate)
+opcode: 100100
+rs: 0000,
+rt: 10000
+immediate: 0000 0000 0000 1111 1 
+
+in binary, 0010 0000 0001 0000 1111 1111 1111 0001 
+in hex, 0x2010FF1
+
+----------------------------------------------------
+• Line #14
+slt $t0,$s0, $s1
+R instruction (opcode,rs,rt,rd,shamt, funct)
+opcode: 000000
+binary: 000000 10000 10001 01000 0000 101010
+hex -> 0x2214024
+-----------------------------------------------------
+• Line #17
+beq $t0, $zero, LEEQ
+I instruction (opcode,rs,rt, immediate)
+binary: 000100 010000 00000 0000 0000 000 0110 0000 0000 0000 0110
+hex: 0x11000006
+
+-----------------------------------------------------
+• Line #20
+j GRT
+J instruction (opcode, address)
+binary: 000010 0000 0100 000 000 000 0011 00
+hex: 0x810000c
