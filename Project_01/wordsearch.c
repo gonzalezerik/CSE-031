@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
+// DO NOT INCLUDE OTHER LIBRARY!
 
 // Declarations of the two functions you will implement
 // Feel free to declare any helper functions
 void printPuzzle(char** arr, int n);
 void searchPuzzle(char** arr, int n, char** list, int listSize);
+int checkNextLetter(int option,int wordSize, char* ptr, char** letter,int i, int j);
 
 // Main function, DO NOT MODIFY!!!	
 int main(int argc, char **argv) {
@@ -28,7 +29,7 @@ int main(int argc, char **argv) {
     }
 
 	// Read puzzle block into 2D arrays
-    for(i = 0; i < bSize; i++) {
+    for(i=0; i<bSize; i++){
         *(block+i) = (char*)malloc(bSize * sizeof(char));
 
         fscanf(fptr, "%c %c %c %c %c %c %c %c %c %c %c %c %c %c %c\n", *(block+i), *(block+i)+1, *(block+i)+2, *(block+i)+3, *(block+i)+4, *(block+i)+5, *(block+i)+6, *(block+i)+7, *(block+i)+8, *(block+i)+9, *(block+i)+10, *(block+i)+11, *(block+i)+12, *(block+i)+13, *(block+i)+14 );
@@ -43,19 +44,19 @@ int main(int argc, char **argv) {
     }
 	
 	// Save words into arrays
-	for(i = 0; i < 50; i++) {
+	for(i=0; i<50; i++){
 		*(words+i) = (char*)malloc(20 * sizeof(char));
 		fgets(*(words+i), 20, fptr);		
 	}
 	
 	// Remove newline characters from each word (except for the last word)
-	for(i = 0; i < 49; i++) {
+	for(i=0; i<49; i++){
 		*(*(words+i) + strlen(*(words+i))-2) = '\0';	
 	}
 	
 	// Print out word list
 	printf("Printing list of words:\n");
-	for(i = 0; i < 50; i++) {
+	for(i=0; i<50; i++){
 		printf("%s\n", *(words + i));		
 	}
 	printf("\n");
@@ -76,113 +77,180 @@ int main(int argc, char **argv) {
 	
     return 0;
 }
-char *toLower(char **list, char *word, int i){
-		//Converts a character to uppercase by adding 32 to it's ASCII value
-	for (int j = 0; j < strlen(*(list + i)); j++)
-	{
-		*(word + j) = *(*(list + i) + j);
-		if (*(*(list + i) + j) < 97)
-		{
-			*(word + j) = *(*(list + i) + j) + 32;
-		}
-	}
-	return word;
-}
 
-char *toUpper(char **list, char *word, int i){
-	//Converts a character to uppercase by subtracting 32 to it's ASCII value
-	for (int j = 0; j < strlen(*(list + i)); j++)
-	{
-		*(word + j) = *(*(list + i) + j);
-		if (*(*(list + i) + j) >= 97)
-		{
-			*(word + j) = *(*(list + i) + j) - 32;
-		}
-	}
-	return word;
-}
-
-
-void printPuzzle(char** arr, int n) {
+void printPuzzle(char** arr, int n){
 	// This function will print out the complete puzzle grid (arr). It must produce the output in the SAME format as the samples in the instructions.
 	// Your implementation here
-	for(int i = 0; i < n; i++){
-		for(int j = 0; j < n; j++){
-		printf("%c ", *(*(arr+i) +j));
+	for(int i = 0; i< n; i++){
+		for(int j=0; j < n; j++){
+			printf("%c ", *(*(arr+i)+j));
 		}
 		printf("\n");
 	}
 
+
 }
 
-void searchPuzzle(char** arr, int n, char** list, int listSize) {
+void searchPuzzle(char** arr, int n, char** list, int listSize){
 	// This function checks if arr contains words from list. If a word appears in arr, it will print out that word and then convert that word entry in arr into lower case.
 	// Your implementation here
-	for (int i = 0; i < listSize; i++) {
- 	char * word = (char * ) malloc((listSize + 1) * sizeof(char * ));
- 	char * tempWord = (char * ) malloc((listSize + 1) * sizeof(char * ));
+	char* ptr;
+	int found = 1;
+	int option = 0;
+	//loop through the states
+	for(int k = 0; k < listSize; k++){
+		int w=0;
+		//ptr to the state
+		ptr = *(list + k);
+		while(*(*(list + k)+w) != '\0'){
+			w++;
+		}
+		//loop through the rows of the wordsearch
+		for(int i = 0; i<n; i++){
+			found = 1;
+			//loop through the collums of the wordsearchch
+			for(int j=0; j<n; j++){
+				//check first letter of the state with the letter in the spot in the wordsearch
+				if(*(ptr) == *(*(arr + i)+ j) || (*(ptr)+32) == *(*(arr + i)+ j) ){
 
-    int wordLength = 0;
-	bool isWord = false;
+					// search check left to right
+					if( ((((i) < n) && (j+1)<n)) ){
+						for(int h=1; ((((i) < n) && ((j+h)<n)) && h<w); h++){
 
-    toUpper(list, word, i);
+							if((*(ptr +h)-32) == *(*(arr + i)+ j+h))
+								found = 0;
+							else if((*(ptr +h)) == *(*(arr + i)+ j+h))
+								found = 0;
+							else{
+								found = 1;
+								break;
+							}
+							if(h != (w-1))
+								found = 1;
+						}
+					}
+					if(found == 0){
+						option = 1;
+						goto printWord;
+					}
+					// search right to left
+					if( (((i) < n) && ((j-1)<n))  ){
+						for(int h=1; ((((i) < n) && ((j-h)<n)) && h<w); h++){
+							if((*(ptr +h)-32) == *(*(arr + i)+ j-h))
+								found = 0;
+							else if((*(ptr +h)) == *(*(arr + i)+ j-h))
+								found = 0;
+							else{
+								found = 1;
+								break;
+							}
+							if(h != (w-1))
+								found = 1;
+						}
+					}
+					if(found == 0){
+						option = 2;
+						goto printWord;
+					}
+					// search check up to down
+					if( ((i+1) < n) && ((j)<n) ){
+						for(int h=1; (((i+h) < n) && ((j)<n) && h<w); h++){
+							if((*(ptr +h)-32) == *(*(arr + i+h)+ j))
+								found = 0;
+							else if((*(ptr +h)) == *(*(arr + i+h)+ j))
+								found = 0;
+							else{
+								found = 1;
+								break;
+							}
+							if(h != (w-1))
+								found = 1;
+						}
+					}
+					if(found == 0){
+						option = 3;
+						goto printWord;
+					}
+					// search top left to bottom right
+					if(  ((i+1) < n) && ((j+1)<n)  ){
+						for(int h=1; ( (((i+h) < n) && ((j+h)<n)) && h<w ); h++){
+							if((*(ptr +h)-32) == *(*(arr + i+h)+ j+h)){
+								found = 0;
+							}
+							else if((*(ptr +h)) == *(*(arr + i+h)+ j+h)){
+								found = 0;
+							}
+							else{
+								found = 1;
+								break;
+							}
+							if(h != (w-1))
+								found = 1;
+						}
+					}
+					if(found == 0){
+						option = 4;
+						goto printWord;
+					}
+					// search diagonal top right to bottom left
+					if(  (((i-1) < n) && ((j-1)<n)) && ((i-1) > 0)  ){
+						for(int h=1; (((i-h) < n) && ((j-h)<n) && h<w); h++){
+							if((*(ptr +h)-32) == *(*(arr + i-h)+ j-h))
+								found = 0;
+							else if((*(ptr +h)) == *(*(arr + i-h)+ j-h)){
+								found = 0;
+							}
+							else{
+								found = 1;
+								break;
+							}
+							if(h != (w-1))
+								found = 1;
+						}
+						option = 5;
+					}
 
-    int count = 0;
-    wordLength = strlen(word);
+					//lower case the letters in the found word and print "found word"
+					printWord:
+					if(found == 0){
+						printf("word found: %s \n", *(list + k));
+						if(option == 1){
+							for(int h=0; ((((i) < n) && ((j+h)<n)) && h<w); h++){
+								if(*(*(arr + i)+ j+h)  >= 'A' && *(*(arr + i)+ j+h)  <= 'Z')
+									*(*(arr + i)+ j+h) += 32;
+							}
+						}
+						else if(option == 2){
+							for(int h=0; ((((i) < n) && ((j-h)<n)) && h<w); h++){
+								if(*(*(arr + i)+ j-h)  >= 'A' && *(*(arr + i)+ j-h)  <= 'Z')
+									*(*(arr + i)+ j-h) += 32;
+							}
+						}
+						else if(option == 3){
+							for(int h=0; (((i+h) < n) && ((j)<n) && h<w); h++){
+								if(*(*(arr + i+h)+ j)  >= 'A' && *(*(arr + i+h)+ j)  <= 'Z')
+									*(*(arr + i+h)+ j) += 32;
+							}
+						}
+						else if(option == 4){
+							for(int h=0; ( (((i+h) < n) && ((j+h)<n)) && h<w ); h++){
+								if(*(*(arr + i+h)+ j+h) >= 'A' && *(*(arr + i+h)+ j+h)  <= 'Z')
+									*(*(arr + i+h)+ j+h) += 32;
+							}
+						}
+						else if(option == 5){
+							for(int h=0; (((i-h) < n) && ((j-h)<n) && h<w); h++){
+								if(*(*(arr + i-h)+ j-h) >= 'A' && *(*(arr + i-h)+ j-h) <= 'Z')
+									*(*(arr + i-h)+ j-h) += 32;
+							}
+						}
+						break;
+					}
 
-    for (int j = 0; j < wordLength; j++) {
-
-    if (isWord == true) {
-      toLower(list, word, i);
-      printf("Word found: %s\n", word);
-	  break; //to avoid duplicates
-    }
-	 else {
-
-      for (int r = 0; r < n-1; r++){//increment through rows 
-        for (int c = 0; c < n-1; c++){///increment through columns 
-		
-          if ( * ( * (arr + r) + c) == * (word + j)) { //check for letter of word
-
-			 if (( * word + (j + 1)) == * ( * (arr + r) + c - 1) && c > 0) // if list prev letter is left
-            {
-              *(tempWord + (j + 1)) = * ( * (arr + r) + c + 1); // set temp string as right value
-              count++;
-            }
-
-        	 else if (( * word + (j + 1)) == * ( * (arr + r) + c + 1) && c < n) // if list prev letter is right
-            {
-              *(tempWord + (j + 1)) = * ( * (arr + r) + c - 1); // set to left value
-              count++;
-            } 
-			
-
-            if (r > 0 && r < n){//within rows 
-				if (( * word + (j + 1)) == * ( * (arr + r - 1) + c)){ //  if letter is above
-                	*(tempWord + (j + 1)) = * ( * (arr + r + 1) + c); // set temp to below 
-               		 count++;
-              }
-			 
-			  else if (( * word + (j + 1)) == * ( * (arr + r - 1) + c + 1)){ // if letter is top right
-                *(tempWord + (j + 1)) = * ( * (arr + r + 1) + c - 1); // set temp to bottom left value
-                count++;
-              } 
-			   else if (( * word + (j + 1)) == * ( * (arr + r - 1) + c - 1)){ // if letter is top left
-                *(tempWord + (j + 1)) = * ( * (arr + r + 1) + c + 1); // set temp to bottom right value
-                count++;
-              }
-            
-          }
-		   if (count == wordLength) { 
-      			isWord = true;
-        }
-      }
-    }
-
-	 }
+				}
+			}
+		}
 	}
-	}
+	
 
 }
-}
-
