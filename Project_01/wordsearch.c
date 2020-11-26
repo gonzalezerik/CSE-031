@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
 	searchPuzzle(block, bSize, words, 50);
 	printf("\n");
 	
-	// Print out final puzzle grid with found words in lower searchCase
+	// Print out final puzzle grid with found words in lower case
     printf("Printing puzzle after search:\n");
     printPuzzle(block, bSize);
 	printf("\n");
@@ -81,8 +81,8 @@ void printPuzzle(char** arr, int n){
 	// This function will print out the complete puzzle grid (arr). It must produce the output in the SAME format as the samples in the instructions.
 	// Your implementation here
 	for(int i = 0; i< n; i++){
-		for(int j=0; j < n; j++){
-			printf("%c ", *(*(arr+i)+j) );
+		for(int j=0; j<n; j++){
+			printf("%c ", *(*(arr+i)+j));
 		}
 		printf("\n");
 	}
@@ -91,45 +91,41 @@ void printPuzzle(char** arr, int n){
 }
 
 void searchPuzzle(char** arr, int n, char** list, int listSize){
-	// This function checks if arr contains words from list. If a word appears in arr, it will print out that word and then convert that word entry in arr into lower searchCase.
+	// This function checks if arr contains words from list. If a word appears in arr, it will print out that word and then convert that word entry in arr into lower case.
 	// Your implementation here
 	char* ptr;
 	bool isFound = false;
 	int searchCase = 0;
-
-	//loop through the states
+	//loop through states
 	for(int k = 0; k < listSize; k++){
-		int w=0;
+		int word=0;
 		//ptr to the state
 		ptr = *(list + k);
-		while(*(*(list + k)+w) != '\0'){
-			w++;
+		while(*(*(list + k)+word) != NULL){
+			word++;
 		}
 		//loop through the rows of the wordsearch
 		for(int i = 0; i<n; i++){
-			isFound = false;
-			//loop through the collums of the wordsearchch
+			isFound = false;;
+			//loop through the cols of the wordsearch
 			for(int j=0; j<n; j++){
 				//check first letter of the state with the letter in the spot in the wordsearch
 				if(*(ptr) == *(*(arr + i)+ j) || (*(ptr)+32) == *(*(arr + i)+ j) ){
 
-					//left to right
+					// search check left to right
 					if( ((((i) < n) && (j+1)<n)) ){
-						for(int h=1; ((((i) < n) && ((j+h)<n)) && h<w); h++){
+						for(int h=1; ((((i) < n) && ((j+h)<n)) && h<word); h++){
 
-							if((*(ptr +h)-32) == *(*(arr + i)+ j+h)){
+							if((*(ptr +h)-32) == *(*(arr + i)+ j+h))
 								isFound = true;
-							}
-							else if((*(ptr +h)) == *(*(arr + i)+ j+h)){
+							else if((*(ptr +h)) == *(*(arr + i)+ j+h))
 								isFound = true;
-							}
 							else{
 								isFound = false;
 								break;
 							}
-							if(h != (w-1))
-								
-								isFound = false; 
+							if(h != (word-1))
+								isFound = false;
 						}
 					}
 					if(isFound == true){
@@ -138,40 +134,35 @@ void searchPuzzle(char** arr, int n, char** list, int listSize){
 					}
 					// search right to left
 					if( (((i) < n) && ((j-1)<n))  ){
-						for(int h=1; ((((i) < n) && ((j-h)<n)) && h<w); h++){
-							if((*(ptr +h)-32) == *(*(arr + i)+ j-h)){
-								isFound == true;
-							}
-							else if((*(ptr +h)) == *(*(arr + i)+ j-h)){
-								isFound == true;
-							}
+						for(int h=1; ((((i) < n) && ((j-h)<n)) && h<word); h++){
+							if((*(ptr +h)-32) == *(*(arr + i)+ j-h))
+								isFound = true;
+							else if((*(ptr +h)) == *(*(arr + i)+ j-h))
+								isFound = true;
 							else{
 								isFound = false;
 								break;
 							}
-							if(h != (w-1)){
+							if(h != (word-1))
 								isFound = false;
-							}
 						}
 					}
 					if(isFound == true){
 						searchCase = 2;
 						goto printWord;
 					}
-					// search up to down
+					// search check up to down
 					if( ((i+1) < n) && ((j)<n) ){
-						for(int h=1; (((i+h) < n) && ((j)<n) && h<w); h++){
-							if((*(ptr +h)-32) == *(*(arr + i+h)+ j)){
-								isFound == true;
-							}
-							else if((*(ptr +h)) == *(*(arr + i+h)+ j)){
-								isFound == true;
-							}
+						for(int h=1; (((i+h) < n) && ((j)<n) && h<word); h++){
+							if((*(ptr +h)-32) == *(*(arr + i+h)+ j))
+								isFound = true;
+							else if((*(ptr +h)) == *(*(arr + i+h)+ j))
+								isFound = true;
 							else{
 								isFound = false;
 								break;
 							}
-							if(h != (w-1))
+							if(h != (word-1))
 								isFound = false;
 						}
 					}
@@ -179,87 +170,89 @@ void searchPuzzle(char** arr, int n, char** list, int listSize){
 						searchCase = 3;
 						goto printWord;
 					}
+
 					// search top left to bottom right
 					if(  ((i+1) < n) && ((j+1)<n)  ){
-						for(int h=1; ( (((i+h) < n) && ((j+h)<n)) && h<w ); h++){
+						for(int h=1; ( (((i+h) < n) && ((j+h)<n)) && h<word ); h++){
 							if((*(ptr +h)-32) == *(*(arr + i+h)+ j+h)){
-								isFound == true;
+								isFound = true;
 							}
 							else if((*(ptr +h)) == *(*(arr + i+h)+ j+h)){
-								isFound == true;
+								isFound = true;
 							}
 							else{
-								isFound == false;
+								isFound = false;
 								break;
 							}
-							if(h != (w-1))
-								isFound == false;
+							if(h != (word-1))
+								isFound = false;
 						}
 					}
-					if(isFound ==true){
+					if(isFound == true){
 						searchCase = 4;
 						goto printWord;
 					}
 					// search diagonal top right to bottom left
 					if(  (((i-1) < n) && ((j-1)<n)) && ((i-1) > 0)  ){
-						for(int h=1; (((i-h) < n) && ((j-h)<n) && h<w); h++){
-							if((*(ptr +h)-32) == *(*(arr + i-h)+ j-h)){
-								isFound == true;
-							}
+						for(int h=1; (((i-h) < n) && ((j-h)<n) && h<word); h++){
+							if((*(ptr +h)-32) == *(*(arr + i-h)+ j-h))
+								isFound = true;
 							else if((*(ptr +h)) == *(*(arr + i-h)+ j-h)){
-								isFound == true;
+								isFound = true;
 							}
 							else{
-								isFound == false;
+								isFound = false;
 								break;
 							}
-							if(h != (w-1))
-								isFound == false;
+							if(h != (word-1))
+								isFound = false;
 						}
 						searchCase = 5;
 					}
 
-					//lower searchCase the letters in the found word and print "found word"
+					//lower case the letters in the found word and print "found word"
 					printWord:
-					if(isFound  == true){
+					if(isFound == true){
 						printf("Word found: %s \n", *(list + k));
-
-
-						
-
-
-
-						if(searchCase == 1){
-							for(int h=0; ((((i) < n) && ((j+h)<n)) && h<w); h++){
+						switch(searchCase){
+							case 1: 
+								for(int h=0; ((((i) < n) && ((j+h)<n)) && h<word); h++){
 								if(*(*(arr + i)+ j+h)  >= 'A' && *(*(arr + i)+ j+h)  <= 'Z')
 									*(*(arr + i)+ j+h) += 32;
-							}
-						}
-						else if(searchCase == 2){
-							for(int h=0; ((((i) < n) && ((j-h)<n)) && h<w); h++){
+								}
+								break;
+
+							case 2:
+								for(int h=0; ((((i) < n) && ((j-h)<n)) && h<word); h++){
 								if(*(*(arr + i)+ j-h)  >= 'A' && *(*(arr + i)+ j-h)  <= 'Z')
 									*(*(arr + i)+ j-h) += 32;
-							}
-						}
-						else if(searchCase == 3){
-							for(int h=0; (((i+h) < n) && ((j)<n) && h<w); h++){
+								} 
+								break;
+
+							case 3: 
+								for(int h=0; (((i+h) < n) && ((j)<n) && h<word); h++){
 								if(*(*(arr + i+h)+ j)  >= 'A' && *(*(arr + i+h)+ j)  <= 'Z')
 									*(*(arr + i+h)+ j) += 32;
-							}
-						}
-						else if(searchCase == 4){
-							for(int h=0; ( (((i+h) < n) && ((j+h)<n)) && h<w ); h++){
+								}
+								break;
+
+							case 4: 
+								for(int h=0; ( (((i+h) < n) && ((j+h)<n)) && h<word ); h++){
 								if(*(*(arr + i+h)+ j+h) >= 'A' && *(*(arr + i+h)+ j+h)  <= 'Z')
 									*(*(arr + i+h)+ j+h) += 32;
-							}
-						}
-						else if(searchCase == 5){
-							for(int h=0; (((i-h) < n) && ((j-h)<n) && h<w); h++){
+								}
+								break;
+
+							case 5: 
+								for(int h=0; (((i-h) < n) && ((j-h)<n) && h<word); h++){
 								if(*(*(arr + i-h)+ j-h) >= 'A' && *(*(arr + i-h)+ j-h) <= 'Z')
 									*(*(arr + i-h)+ j-h) += 32;
-							}
+								}
+								break;
+							
 						}
-						break;
+
+					break; 
 					}
 
 				}
