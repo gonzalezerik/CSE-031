@@ -1,0 +1,29 @@
+1. Cache is memory in our hard-drive and RAM, we use Cache to increase perfomance of the computer
+4. Offset tells us how many blocks in cache. We know that offset is 4 bits (2^4=16). It is not practical.
+5. We need 6 index bits. log2(64).
+6. We get cache by numBlocks * blockSize to get total cache
+7. The leftover are the TAG bits. We need them to get a quick insight of larger memory follwing the address, allowing the system to be more efficient. If TAG bits are the same as request, then we know it is a hit, if not it is a miss.
+8a. 2^20 bytes
+8b. log2(8) = 3 bits
+8c. 16 blocks (128/8)
+8d. 4 index bits
+8e. 20-13-4 = 13 TAG bits
+8f. 
+tag    v     d   Data    -
+13 b | 1b | 1b | 8 bytes ]- 16 blocks
+8g. 79 bits (1 valid + 13 tag bits + 64 bit data block)
+---------------------------
+1. With direct-mapped, multiple memory will have the same index. We only have 1 block in each set, so two address that map to the saem set will create conflict
+3. We need 8 index bits. (log2 (1024/4) = 8) 
+4a. 2 ^20 bits
+4b. log2(8) = 3 bits
+4c. 128/8 = 16 blocks
+4d. 16/2 = 8 sets
+4e. 3 index bits log2(sets)
+4f. 14 bits (20-3-3)
+4g. 
+tag  v    d   Data }
+14 | 1b | 1b | 8B  } 16 blocks
+		     8 sets
+4h. 80 bits, 14+1+1+64
+
