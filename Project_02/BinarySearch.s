@@ -99,9 +99,7 @@ printList:
 	move $t0, $a0 
 	move $t1, $a1 
 	
-	ploop:
-
-	
+	printLoop:
 	lw $a0, 0($t0)
 	li $v0, 1
 	syscall
@@ -109,17 +107,18 @@ printList:
 	addi $t0, $t0, 4 
 	addi $t1, $t1, -1
 
-	beq $t1, $zero, pend 
-	j printComma
+	beq $t1, $zero, printEnd 
+	j printSpace
 
-printComma: #prints a space
+printSpace: 
 	la $t2, space
 	move $a0, $t2
 	li $v0, 4
 	syscall
 	
-	j ploop
-pend:
+	j printLoop
+	
+printEnd:
 	la $t2, newLine
 	move $a0, $t2
 	li $v0, 4
@@ -141,83 +140,72 @@ inSort:
 	sw $s1, 16($sp)
 	sw $s2, 20($sp)
 	sw $s3, 24($sp)
-	sw $s4, 28($sp) 
-	
+	sw $s4, 28($sp) #Spaces for array
 	
 	move $s0, $s1 # address of original array
 	move $s1, $a1 # size of array
 	addi $s2, $zero, 1 #i = 1
 	
-		arraycp:
+		copy:
 		la $t0, original_list
 		la $t1, sorted_list
-		addi $t6, $t6, 0 # iterator
-		# s1 is size
+		addi $t6, $t6, 0 # i, s1 = size
+
 	
-		arraycploop:
-		#addi $t7, $t6, 1 # iterator is done when one less than size
-		beq $s1, $t6, arraycpend
+		copyLoop:
+		beq $s1, $t6, copyEnd
 		
 		lw $t2, ($t0)
 		sw $t2, ($t1)
 		
-		#iterates pointers and iterator
+		#pointers++
 		addi $t0, $t0, 4 
 		addi $t1, $t1, 4
 		addi $t6, $t6, 1
 		
-		j arraycploop
+		j copyLoop
 
-		arraycpend:
+		copyEnd:
 		la $t1, sorted_list
 		move $s0, $t1
 	
 	
-	iloop:
-	beq $s2, $s1, iend # if i = arraySize then end
-	
-	#move $t0, $s0 # address of original array
+	iLoop:
+	beq $s2, $s1, iEnd #i = arraySize --> end
 	sll $t2, $s2, 2 # i * 4
 	add $t3, $s0, $t2 # t3 = *array + offset
 	lw $s3, ($t3) # s3 = array[i]
 	addi $s4, $s2, -1 # j = i--
 	
-		jloop:
-		# break if j < 0
-		bltz $s4, jend # TODO confirm jend works correctly 
-		
-		# break if array[j] > key
-		#addi $t0, $s4, 1 # t0 = j + 1
-		move $a0, $s3 # a0 = s3 = key = array[i]
+		jLoop:
+		# branch if less than zero
+		bltz $s4, jEnd 
+		move $a0, $s3 # a0 =array[i]
 	
 		la $t0, ($s0)
 		sll $t2, $s4, 2
 		add $t3, $t0, $t2 # t3 = array[j]
 		lw $a1, ($t3)
 		
-	
-		jal stringlt 
+		jal compare 
 		
 		move $t0, $v0
-		beq $t0, $zero, jend 
+		beq $t0, $zero, jEnd 
 		
-		# c code:
-		# array[j+1] = array[j];
-		# j--
-		la $t0, ($s0) 
+		la $t0, ($s0) # array[j+1] = array[j], j--
 		sll $t2, $s4, 2 
 		add $t3, $t0, $t2
 		lw $t4, 0($t3) # t4 = array[j]
 
-		addi $t2, $s4, 1 # t2 = j + 1
+		addi $t2, $s4, 1 # t2 = j++
 		sll $t3, $t2, 2
-		add $t1, $t3, $s0 # address of array[j+1]
-		sw $t4, 0($t1) # array[j+1] = array[j]
+		add $t1, $t3, $s0 # & array[j+1]
+		sw $t4, 0($t1) # incrememnt to next element = array[j]
 		addi $s4, $s4, -1 # j--
 		
-		j jloop
+		j jLoop
 		
-		jend:
+		jEnd:
 		
 		#array[j+1] = key
 		move $t0, $s4
@@ -227,11 +215,10 @@ inSort:
 		
 		sw $s3, ($t1)
 		
-		
 		addi $s2, $s2, 1 #i++
-		j iloop
-	iend:
-	# restores a1
+		j iLoop
+	iEnd:
+	# restore a1
 	move $a1, $s1
 	
 	lw $ra, 8($sp)
@@ -240,52 +227,35 @@ inSort:
 	lw $s2, 20($sp)
 	lw $s3, 24($sp)
 	lw $s4, 28($sp)
-	addi $sp, $sp, 32
-	
-	
-	
+	addi $sp, $sp, 32 #More space
 	
 	la $v0, sorted_list # returns the address of the sorted array
 	jr $ra
+	
+#  true if less than, false if greater than
+compare: 
 
-	
-	
-	
-#string less than function: returns true if less than, false if greater than
-stringlt: 
-
-	move $t0, $a0 # t0 = a0 = s3 = key = array[i]
+	move $t0, $a0 # t0 = array[i]
 	move $t1, $a1 # array [j]
-
-
-	sltloop:
-	#lb $t2, ($t0) #TODO lb vs lw and 0($t0)
-	#lb $t3, ($t1)
 	
-	#and $t4, $t2, $t3 # checks if null terminator
-	#beq $t4, $zero, stringend
+	compareLoop:
+	blt $t0, $t1, ifLess # jumps to less than if t0 < t1
+	bge $t0, $t1, ifGreater # jumps to greater than if t0 > t1
+	j compareLoop #set onLess THan
 	
-	blt $t0, $t1, iflt # jumps to less than if t0 < t1
-	bge $t0, $t1, ifgt # jumps to greater than if t0 > t1
+	stringEnd:
+	beq $t2, $zero, ifLess # if x = 0
+	j ifGreater # returns false
 	
-	#don't know why'd we do this, so I'm removing it
-	#addi $t0, $t0, 1 # increments t0
-	#addi $t1, $t1, 1 # increments t0
-	j sltloop
-	
-	stringend:
-	beq $t2, $zero, iflt # checks if x = 0
-	j ifgt # returns false
-	
-	iflt: # returns true
+	ifLess: # returns true
 	li $v0, 1
-	j sltend	
+	j sltEnd	
 	
-	ifgt: # returns false
+	ifGreater: # returns false
 	li $v0, 0
-	j sltend
+	j sltEnd
 
-	sltend:
+	sltEnd:
 	jr $ra
 	
 	
@@ -295,20 +265,17 @@ stringlt:
 #Note: you MUST NOT use iterative approach in this function.
 bSearch:
 	#Your implementation of bSearch here
-	
-	move $s0, $a0 # address sorted list
+	move $s0, $a0 # address of sorted list
 	move $s1, $a1 # right
 	move $s2, $a2 # search key
 	move $s3, $a3 # left
 	li $s5, 0 # mid
 	
-
 	addi $s1, $s1, -1 # size/right
 	
-
-	bgt $s3, $s1, rightcheck
-	nopegoback:
-	blt $s1, $s3, bfalse 
+	bgt $s3, $s1, checkRight
+	exit:
+	blt $s1, $s3, searchFalse 
 	
 	# mid = l + (r - l)/2
 	sub $t0, $s1, $s3
@@ -321,42 +288,41 @@ bSearch:
 	lw $t1, ($t2)
 	
 	
-	beq $t1, $s2, btrue
+	beq $t1, $s2, searchTrue
 	
-	# hacky code if l == 0 and r == 0 false
-	li $t4, 0
-	li $t5, 0
+	li $t4, 0 #l == 0
+	li $t5, 0 # r == 0
 	
 	slti $t4, $a3, 1
 	slti $t5, $a1, 1
 	
 	add $t4, $t4, $t5
 	li $t5, 2
-	beq $t4, $t5, bfalse
+	beq $t4, $t5, searchFalse
 	
-	bgt $t1, $s2, bsgt # jumps to greater than if t0 > t1
-	blt $t1, $s2, bslt # jumps to less than if t0 < t1
+	bgt $t1, $s2, searchGreater # jumps to greater than if t0 > t1
+	blt $t1, $s2, searchLess # jumps to less than if t0 < t1
 	
-	bsgt:
+	searchGreater:
 	sub $a1, $s5, $s3
 	j bSearch
 	
-	bslt:
+	searchLess:
 	addi $a3, $s5, 1
 	j bSearch
 	
-	btrue:
+	searchTrue:
 	li $v0, 1
 	jr $ra
-	bfalse:
+	searchFalse:
 	li $v0, 0
 	jr $ra
 
-	rightcheck:
+	checkRight:
 		sll $t6, $s1, 2
 		add $t6, $s0, $t6
 		lw $t7, ($t6)
-		beq $a2, $t7, btrue
+		beq $a2, $t7, searchTrue
 		
-	j nopegoback
+	j exit
 	
