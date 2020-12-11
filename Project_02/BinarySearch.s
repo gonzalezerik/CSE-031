@@ -2,9 +2,6 @@
 
 original_list: .space 100 
 sorted_list: .space 100
-# For Printing
-space: .asciiz " "
-newLine: .asciiz "\n"
 
 str0: .asciiz "Enter size of list (between 1 and 25): "
 str1: .asciiz "Enter one list element: "
@@ -14,7 +11,8 @@ str4: .asciiz "Content of sorted list: "
 strYes: .asciiz "Key found!"
 strNo: .asciiz "Key not found!"
 
-
+space: .asciiz " "
+newLine: .asciiz "\n"
 
 .text 
 
@@ -28,10 +26,10 @@ strNo: .asciiz "Key not found!"
 main: 
 	addi $sp, $sp -8
 	sw $ra, 0($sp)
-	li $v0, 4 
+	li $v0, 4  
 	la $a0, str0 
-	syscall 
-	li $v0, 5	#read size of list from user
+	syscall
+	li $v0, 5	#Read size of list from user
 	syscall
 	move $s0, $v0
 	move $t0, $0
@@ -42,23 +40,21 @@ loop_in:
 	syscall 
 	sll $t1, $t0, 2
 	add $t1, $t1, $s1
-	li $v0, 5	#read elements from user
+	li $v0, 5	#Read elements from user
 	syscall
 	sw $v0, 0($t1)
 	addi $t0, $t0, 1
 	bne $t0, $s0, loop_in
-	move $a0, $s1
-	move $a1, $s0
 	
-	jal inSort	#Call inSort to perform insertion sort in original list
-	
-	sw $v0, 4($sp)
 	li $v0, 4 
 	la $a0, str2 
 	syscall 
-	la $a0, original_list
+	move $a0, $s1
 	move $a1, $s0
-	jal printList	#Print original list
+	jal printList	#Call print original list
+	
+	jal inSort	#Call inSort to perform insertion sort in original list
+	sw $v0, 4($sp)
 	li $v0, 4 
 	la $a0, str4 
 	syscall 
@@ -68,11 +64,11 @@ loop_in:
 	li $v0, 4 
 	la $a0, str3 
 	syscall 
-	li $v0, 5	#read search key from user
+	li $v0, 5	#Read search key from user
 	syscall
-	move $a3, $v0
+	move $a2, $v0
 	lw $a0, 4($sp)
-	jal bSearch	#call bSearch to perform binary search
+	jal bSearch	#Call bSearch to perform binary search
 	
 	beq $v0, $0, notFound
 	li $v0, 4 
@@ -98,12 +94,14 @@ printList:
 	addi $sp, $sp -4
 	sw $ra, 0($sp)
 	
-	#a0 = address of the array
-	#a1 =  size of the array
+	#a0 = array address
+	#a1 = array size
 	move $t0, $a0 
 	move $t1, $a1 
 	
-	printLoop:
+	ploop:
+
+	
 	lw $a0, 0($t0)
 	li $v0, 1
 	syscall
@@ -111,17 +109,17 @@ printList:
 	addi $t0, $t0, 4 
 	addi $t1, $t1, -1
 
-	beq $t1, $zero, printEnd
-	j printSpace
+	beq $t1, $zero, pend 
+	j printComma
 
-printSpace: 
+printComma: #prints a space
 	la $t2, space
 	move $a0, $t2
 	li $v0, 4
 	syscall
 	
-	j printLoop
-printEnd:
+	j ploop
+pend:
 	la $t2, newLine
 	move $a0, $t2
 	li $v0, 4
@@ -131,8 +129,7 @@ printEnd:
 	addi $sp, $sp 4
 	
 	jr $ra	
-	
-	
+
 #inSort takes in a list and it size as arguments. 
 #It performs INSERTION sort in ascending order and returns a new sorted list
 #You may use the pre-defined sorted_list to store the result
@@ -144,19 +141,21 @@ inSort:
 	sw $s1, 16($sp)
 	sw $s2, 20($sp)
 	sw $s3, 24($sp)
-	sw $s4, 28($sp)  #Create space
+	sw $s4, 28($sp) 
 	
-	move $s0, $s1 #see lines 103-104
-	move $s1, $a1 
+	
+	move $s0, $s1 # address of original array
+	move $s1, $a1 # size of array
 	addi $s2, $zero, 1 #i = 1
 	
-	arraycp:
+		arraycp:
 		la $t0, original_list
 		la $t1, sorted_list
 		addi $t6, $t6, 0 # iterator
-
+		# s1 is size
 	
 		arraycploop:
+		#addi $t7, $t6, 1 # iterator is done when one less than size
 		beq $s1, $t6, arraycpend
 		
 		lw $t2, ($t0)
@@ -175,13 +174,13 @@ inSort:
 	
 	
 	iloop:
-	beq $s2, $s1, iend # if i = arraySize
+	beq $s2, $s1, iend # if i = arraySize then end
 	
 	#move $t0, $s0 # address of original array
-	sll $t2, $s2, 2 # muliplies i by 4
-	add $t3, $s0, $t2 # t3 = address of og array + offset
+	sll $t2, $s2, 2 # i * 4
+	add $t3, $s0, $t2 # t3 = *array + offset
 	lw $s3, ($t3) # s3 = array[i]
-	addi $s4, $s2, -1 # j = i - 1
+	addi $s4, $s2, -1 # j = i--
 	
 		jloop:
 		# break if j < 0
@@ -189,28 +188,18 @@ inSort:
 		
 		# break if array[j] > key
 		#addi $t0, $s4, 1 # t0 = j + 1
-		# TODO why... this should never be zero... I'm removing it: beq $t0, $zero, jend # if j = 0 then jend
 		move $a0, $s3 # a0 = s3 = key = array[i]
 	
-		la $t0, ($s0) # TODO 0
+		la $t0, ($s0)
 		sll $t2, $s4, 2
 		add $t3, $t0, $t2 # t3 = array[j]
-		#move $a1, $t3 #TODO 0, value of array[j] as argument 
 		lw $a1, ($t3)
 		
-		# a0 = key
-		# a1 = array[j]
-		# if key < array then v0 = 1
-		# if key > array then v0 = 0
+	
 		jal stringlt 
 		
 		move $t0, $v0
-		beq $t0, $zero, jend #if true, end
-		#addi $t1, $s4, 1 # if not, j++
-		#beq $s4, $zero, jend #if j = 0, end
-		
-		
-		# nested loop begins!
+		beq $t0, $zero, jend 
 		
 		# c code:
 		# array[j+1] = array[j];
@@ -229,10 +218,6 @@ inSort:
 		j jloop
 		
 		jend:
-		#move $t0, $s0
-		#sll $t2, $s4, 2
-		#add $t1, $t4, $t0
-		#lw $s3, 0($t1) #TODO 0 #s3 = array[j+1] #C1
 		
 		#array[j+1] = key
 		move $t0, $s4
@@ -261,83 +246,12 @@ inSort:
 	
 	
 	la $v0, sorted_list # returns the address of the sorted array
-	jr $ra	
-	
-	
-#bSearch takes in a list, its size, and a search key as arguments.
-#It performs binary search RECURSIVELY to look for the search key.
-#It will return a 1 if the key is found, or a 0 otherwise.
-#Note: you MUST NOT use iterative approach in this function.
-bSearch:
-	#Your implementation of bSearch here
-	move $s0, $a0 # address sorted list
-	move $s1, $a1 # right
-	move $s2, $a2 # search key
-	move $s3, $a3 # left
-	li $s5, 0 # mid
-	
-
-	addi $s1, $s1, -1 # right
-	
-
-	bgt $s3, $s1, rightcheck
-	endCase:
-	blt $s1, $s3, bfalse 
-	
-	# mid = l + (r - l)/2
-	sub $t0, $s1, $s3
-	div $t0, $t0, 2
-	add $s5, $s3, $t0
-	
-	# t1 = array[mid]
-	sll $t1, $s5, 2
-	add $t2, $s0, $t1
-	lw $t1, ($t2)
-	
-	
-	beq $t1, $s2, btrue
-	
-	# if l == 0 and r == 0 false
-	li $t4, 0
-	li $t5, 0
-	
-	slti $t4, $a3, 1
-	slti $t5, $a1, 1
-	
-	add $t4, $t4, $t5
-	li $t5, 2
-	beq $t4, $t5, bfalse
-	
-	bgt $t1, $s2, bsgt # jumps to greater than if t0 > t1
-	
-	
-	blt $t1, $s2, bslt # jumps to less than if t0 < t1
-	
-	
-	
-	
-	bsgt:
-	sub $a1, $s5, $s3
-	j bSearch
-	
-	bslt:
-	addi $a3, $s5, 1
-	j bSearch
-	
-	btrue:
-	li $v0, 1
-	jr $ra
-	bfalse:
-	li $v0, 0
 	jr $ra
 
-	rightcheck:
-		sll $t6, $s1, 2
-		add $t6, $s0, $t6
-		lw $t7, ($t6)
-		beq $a2, $t7, btrue
-		
-	j endCase
+	
+	
+	
+#string less than function: returns true if less than, false if greater than
 stringlt: 
 
 	move $t0, $a0 # t0 = a0 = s3 = key = array[i]
@@ -374,4 +288,75 @@ stringlt:
 	sltend:
 	jr $ra
 	
+	
+#bSearch takes in a list, its size, and a search key as arguments.
+#It performs binary search RECURSIVELY to look for the search key.
+#It will return a 1 if the key is found, or a 0 otherwise.
+#Note: you MUST NOT use iterative approach in this function.
+bSearch:
+	#Your implementation of bSearch here
+	
+	move $s0, $a0 # address sorted list
+	move $s1, $a1 # right
+	move $s2, $a2 # search key
+	move $s3, $a3 # left
+	li $s5, 0 # mid
+	
+
+	addi $s1, $s1, -1 # size/right
+	
+
+	bgt $s3, $s1, rightcheck
+	nopegoback:
+	blt $s1, $s3, bfalse 
+	
+	# mid = l + (r - l)/2
+	sub $t0, $s1, $s3
+	div $t0, $t0, 2
+	add $s5, $s3, $t0
+	
+	# t1 = array[mid]
+	sll $t1, $s5, 2
+	add $t2, $s0, $t1
+	lw $t1, ($t2)
+	
+	
+	beq $t1, $s2, btrue
+	
+	# hacky code if l == 0 and r == 0 false
+	li $t4, 0
+	li $t5, 0
+	
+	slti $t4, $a3, 1
+	slti $t5, $a1, 1
+	
+	add $t4, $t4, $t5
+	li $t5, 2
+	beq $t4, $t5, bfalse
+	
+	bgt $t1, $s2, bsgt # jumps to greater than if t0 > t1
+	blt $t1, $s2, bslt # jumps to less than if t0 < t1
+	
+	bsgt:
+	sub $a1, $s5, $s3
+	j bSearch
+	
+	bslt:
+	addi $a3, $s5, 1
+	j bSearch
+	
+	btrue:
+	li $v0, 1
+	jr $ra
+	bfalse:
+	li $v0, 0
+	jr $ra
+
+	rightcheck:
+		sll $t6, $s1, 2
+		add $t6, $s0, $t6
+		lw $t7, ($t6)
+		beq $a2, $t7, btrue
+		
+	j nopegoback
 	
