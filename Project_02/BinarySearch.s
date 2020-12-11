@@ -111,10 +111,10 @@ printList:
 	addi $t0, $t0, 4 
 	addi $t1, $t1, -1
 
-	beq $t1, $zero, printEnd # if t1 = 0, breaks before printing comma
+	beq $t1, $zero, printEnd
 	j printSpace
 
-printSpace: #prints a space
+printSpace: 
 	la $t2, space
 	move $a0, $t2
 	li $v0, 4
@@ -138,8 +138,130 @@ printEnd:
 #You may use the pre-defined sorted_list to store the result
 inSort:
 	#Your implementation of inSort here
+	addi $sp, $sp, -32
+	sw $ra, 8($sp)
+	sw $s0, 12($sp)
+	sw $s1, 16($sp)
+	sw $s2, 20($sp)
+	sw $s3, 24($sp)
+	sw $s4, 28($sp)  #Create space
 	
-	jr $ra
+	move $s0, $s1 #see lines 103-104
+	move $s1, $a1 
+	addi $s2, $zero, 1 #i = 1
+	
+	arraycp:
+		la $t0, original_list
+		la $t1, sorted_list
+		addi $t6, $t6, 0 # iterator
+
+	
+		arraycploop:
+		beq $s1, $t6, arraycpend
+		
+		lw $t2, ($t0)
+		sw $t2, ($t1)
+		
+		#iterates pointers and iterator
+		addi $t0, $t0, 4 
+		addi $t1, $t1, 4
+		addi $t6, $t6, 1
+		
+		j arraycploop
+
+		arraycpend:
+		la $t1, sorted_list
+		move $s0, $t1
+	
+	
+	iloop:
+	beq $s2, $s1, iend # if i = arraySize
+	
+	#move $t0, $s0 # address of original array
+	sll $t2, $s2, 2 # muliplies i by 4
+	add $t3, $s0, $t2 # t3 = address of og array + offset
+	lw $s3, ($t3) # s3 = array[i]
+	addi $s4, $s2, -1 # j = i - 1
+	
+		jloop:
+		# break if j < 0
+		bltz $s4, jend # TODO confirm jend works correctly 
+		
+		# break if array[j] > key
+		#addi $t0, $s4, 1 # t0 = j + 1
+		# TODO why... this should never be zero... I'm removing it: beq $t0, $zero, jend # if j = 0 then jend
+		move $a0, $s3 # a0 = s3 = key = array[i]
+	
+		la $t0, ($s0) # TODO 0
+		sll $t2, $s4, 2
+		add $t3, $t0, $t2 # t3 = array[j]
+		#move $a1, $t3 #TODO 0, value of array[j] as argument 
+		lw $a1, ($t3)
+		
+		# a0 = key
+		# a1 = array[j]
+		# if key < array then v0 = 1
+		# if key > array then v0 = 0
+		jal stringlt 
+		
+		move $t0, $v0
+		beq $t0, $zero, jend #if true, end
+		#addi $t1, $s4, 1 # if not, j++
+		#beq $s4, $zero, jend #if j = 0, end
+		
+		
+		# nested loop begins!
+		
+		# c code:
+		# array[j+1] = array[j];
+		# j--
+		la $t0, ($s0) 
+		sll $t2, $s4, 2 
+		add $t3, $t0, $t2
+		lw $t4, 0($t3) # t4 = array[j]
+
+		addi $t2, $s4, 1 # t2 = j + 1
+		sll $t3, $t2, 2
+		add $t1, $t3, $s0 # address of array[j+1]
+		sw $t4, 0($t1) # array[j+1] = array[j]
+		addi $s4, $s4, -1 # j--
+		
+		j jloop
+		
+		jend:
+		#move $t0, $s0
+		#sll $t2, $s4, 2
+		#add $t1, $t4, $t0
+		#lw $s3, 0($t1) #TODO 0 #s3 = array[j+1] #C1
+		
+		#array[j+1] = key
+		move $t0, $s4
+		addi $t0, $t0, 1
+		sll $t2, $t0, 2
+		add $t1, $s0, $t2
+		
+		sw $s3, ($t1)
+		
+		
+		addi $s2, $s2, 1 #i++
+		j iloop
+	iend:
+	# restores a1
+	move $a1, $s1
+	
+	lw $ra, 8($sp)
+	lw $s0, 12($sp)
+	lw $s1, 16($sp)
+	lw $s2, 20($sp)
+	lw $s3, 24($sp)
+	lw $s4, 28($sp)
+	addi $sp, $sp, 32
+	
+	
+	
+	
+	la $v0, sorted_list # returns the address of the sorted array
+	jr $ra	
 	
 	
 #bSearch takes in a list, its size, and a search key as arguments.
@@ -148,6 +270,108 @@ inSort:
 #Note: you MUST NOT use iterative approach in this function.
 bSearch:
 	#Your implementation of bSearch here
+	move $s0, $a0 # address sorted list
+	move $s1, $a1 # right
+	move $s2, $a2 # search key
+	move $s3, $a3 # left
+	li $s5, 0 # mid
 	
+
+	addi $s1, $s1, -1 # right
+	
+
+	bgt $s3, $s1, rightcheck
+	endCase:
+	blt $s1, $s3, bfalse 
+	
+	# mid = l + (r - l)/2
+	sub $t0, $s1, $s3
+	div $t0, $t0, 2
+	add $s5, $s3, $t0
+	
+	# t1 = array[mid]
+	sll $t1, $s5, 2
+	add $t2, $s0, $t1
+	lw $t1, ($t2)
+	
+	
+	beq $t1, $s2, btrue
+	
+	# if l == 0 and r == 0 false
+	li $t4, 0
+	li $t5, 0
+	
+	slti $t4, $a3, 1
+	slti $t5, $a1, 1
+	
+	add $t4, $t4, $t5
+	li $t5, 2
+	beq $t4, $t5, bfalse
+	
+	bgt $t1, $s2, bsgt # jumps to greater than if t0 > t1
+	
+	
+	blt $t1, $s2, bslt # jumps to less than if t0 < t1
+	
+	
+	
+	
+	bsgt:
+	sub $a1, $s5, $s3
+	j bSearch
+	
+	bslt:
+	addi $a3, $s5, 1
+	j bSearch
+	
+	btrue:
+	li $v0, 1
 	jr $ra
+	bfalse:
+	li $v0, 0
+	jr $ra
+
+	rightcheck:
+		sll $t6, $s1, 2
+		add $t6, $s0, $t6
+		lw $t7, ($t6)
+		beq $a2, $t7, btrue
+		
+	j endCase
+stringlt: 
+
+	move $t0, $a0 # t0 = a0 = s3 = key = array[i]
+	move $t1, $a1 # array [j]
+
+
+	sltloop:
+	#lb $t2, ($t0) #TODO lb vs lw and 0($t0)
+	#lb $t3, ($t1)
+	
+	#and $t4, $t2, $t3 # checks if null terminator
+	#beq $t4, $zero, stringend
+	
+	blt $t0, $t1, iflt # jumps to less than if t0 < t1
+	bge $t0, $t1, ifgt # jumps to greater than if t0 > t1
+	
+	#don't know why'd we do this, so I'm removing it
+	#addi $t0, $t0, 1 # increments t0
+	#addi $t1, $t1, 1 # increments t0
+	j sltloop
+	
+	stringend:
+	beq $t2, $zero, iflt # checks if x = 0
+	j ifgt # returns false
+	
+	iflt: # returns true
+	li $v0, 1
+	j sltend	
+	
+	ifgt: # returns false
+	li $v0, 0
+	j sltend
+
+	sltend:
+	jr $ra
+	
 	
