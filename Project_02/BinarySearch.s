@@ -2,6 +2,9 @@
 
 original_list: .space 100 
 sorted_list: .space 100
+# For Printing
+space: .asciiz " "
+newLine: .asciiz "\n"
 
 str0: .asciiz "Enter size of list (between 1 and 25): "
 str1: .asciiz "Enter one list element: "
@@ -92,8 +95,42 @@ end:
 #It prints all the elements in one line.
 printList:
 	#Your implementation of printList here	
+	addi $sp, $sp -4
+	sw $ra, 0($sp)
+	
+	#a0 = address of the array
+	#a1 =  size of the array
+	move $t0, $a0 
+	move $t1, $a1 
+	
+	printLoop:
+	lw $a0, 0($t0)
+	li $v0, 1
+	syscall
+	
+	addi $t0, $t0, 4 
+	addi $t1, $t1, -1
 
-	jr $ra
+	beq $t1, $zero, printEnd # if t1 = 0, breaks before printing comma
+	j printSpace
+
+printSpace: #prints a space
+	la $t2, space
+	move $a0, $t2
+	li $v0, 4
+	syscall
+	
+	j printLoop
+printEnd:
+	la $t2, newLine
+	move $a0, $t2
+	li $v0, 4
+	syscall	
+
+	lw $ra, 0($sp) #restore $ra
+	addi $sp, $sp 4
+	
+	jr $ra	
 	
 	
 #inSort takes in a list and it size as arguments. 
